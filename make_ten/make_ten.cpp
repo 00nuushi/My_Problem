@@ -42,28 +42,28 @@ void make_ten(int a, int b, int c, int d, char *equation)
         for (auto op3 : operater){
           if (calc_equation(tmp_calc_ab, tmp_calc_cd, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_a, op1, tmp_b, op3, tmp_c, op2, tmp_d);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_a, op1, tmp_b, op3, tmp_c, op2, tmp_d);
           }else if (calc_equation(tmp_calc_cd, tmp_calc_ab, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_c, op2, tmp_d, op3, tmp_a, op1, tmp_b);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_c, op2, tmp_d, op3, tmp_a, op1, tmp_b);
           }else if (calc_equation(tmp_calc_ab, tmp_calc_dc, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_a, op1, tmp_b, op3, tmp_d, op2, tmp_c);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_a, op1, tmp_b, op3, tmp_d, op2, tmp_c);
           }else if (calc_equation(tmp_calc_dc, tmp_calc_ab, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_d, op2, tmp_c, op3, tmp_a, op1, tmp_b);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_d, op2, tmp_c, op3, tmp_a, op1, tmp_b);
           }else if (calc_equation(tmp_calc_ba, tmp_calc_cd, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_b, op1, tmp_a, op3, tmp_c, op2, tmp_d);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_b, op1, tmp_a, op3, tmp_c, op2, tmp_d);
           }else if (calc_equation(tmp_calc_cd, tmp_calc_ba, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_c, op2, tmp_d, op3, tmp_b, op1, tmp_a);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_c, op2, tmp_d, op3, tmp_b, op1, tmp_a);
           }else if (calc_equation(tmp_calc_ba, tmp_calc_dc, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_b, op1, tmp_a, op3, tmp_d, op2, tmp_c);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_b, op1, tmp_a, op3, tmp_d, op2, tmp_c);
           }else if (calc_equation(tmp_calc_dc, tmp_calc_ba, op3) == 10){
             can_make_ten = true;
-            sprintf(equation, "(%1.1lf%c%1.1lf)%c(%1.1lf%c%1.1lf)", tmp_d, op2, tmp_c, op3, tmp_b, op1, tmp_a);
+            sprintf(equation, "(%1.0lf%c%1.0lf)%c(%1.0lf%c%1.0lf)", tmp_d, op2, tmp_c, op3, tmp_b, op1, tmp_a);
           }
           if (can_make_ten) break;
         }
@@ -99,35 +99,35 @@ void make_ten(int a, int b, int c, int d, char *equation)
             tmp_calc_dcb = calc_equation(tmp_d, tmp_calc_cb, op2);
             for (auto op3 : operater){
               if (calc_equation(tmp_a, tmp_calc_bcd, op3) == 10){
-                sprintf(equation, "%1.1lf%c((%1.1lf%c%1.1lf)%c%1.1lf)", tmp_a, op3, tmp_b, op1, tmp_c, op2, tmp_d);
+                sprintf(equation, "%1.0lf%c((%1.0lf%c%1.0lf)%c%1.0lf)", tmp_a, op3, tmp_b, op1, tmp_c, op2, tmp_d);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_a, tmp_calc_dbc, op3) == 10){
-                sprintf(equation, "%1.1lf%c(%1.1lf%c(%1.1lf%c%1.1lf))", tmp_a, op3, tmp_d, op2, tmp_b, op1, tmp_c);
+                sprintf(equation, "%1.0lf%c(%1.0lf%c(%1.0lf%c%1.0lf))", tmp_a, op3, tmp_d, op2, tmp_b, op1, tmp_c);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_a, tmp_calc_cbd, op3) == 10){
-                sprintf(equation, "%1.1lf%c((%1.1lf%c%1.1lf)%c%1.1lf)", tmp_a, op3, tmp_c, op1, tmp_b, op2, tmp_d);
+                sprintf(equation, "%1.0lf%c((%1.0lf%c%1.0lf)%c%1.0lf)", tmp_a, op3, tmp_c, op1, tmp_b, op2, tmp_d);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_a, tmp_calc_dcb, op3) == 10){
-                sprintf(equation, "%1.1lf%c(%1.1lf%c(%1.1lf%c%1.1lf))", tmp_a, op3, tmp_d, op2, tmp_c, op1, tmp_b);
+                sprintf(equation, "%1.0lf%c(%1.0lf%c(%1.0lf%c%1.0lf))", tmp_a, op3, tmp_d, op2, tmp_c, op1, tmp_b);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_calc_bcd, tmp_a, op3) == 10){
-                sprintf(equation, "((%1.1lf%c%1.1lf)%c%1.1lf)%c%1.1lf", tmp_b, op1, tmp_c, op2, tmp_d, op3, tmp_a);
+                sprintf(equation, "((%1.0lf%c%1.0lf)%c%1.0lf)%c%1.0lf", tmp_b, op1, tmp_c, op2, tmp_d, op3, tmp_a);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_calc_dbc, tmp_a, op3) == 10){
-                sprintf(equation, "(%1.1lf%c(%1.1lf%c%1.1lf))%c%1.1lf", tmp_d, op2, tmp_b, op1, tmp_c, op3, tmp_a);
+                sprintf(equation, "(%1.0lf%c(%1.0lf%c%1.0lf))%c%1.0lf", tmp_d, op2, tmp_b, op1, tmp_c, op3, tmp_a);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_calc_cbd, tmp_a, op3) == 10){
-                sprintf(equation, "((%1.1lf%c%1.1lf)%c%1.1lf)%c%1.1lf", tmp_c, op1, tmp_b, op2, tmp_d, op3, tmp_a);
+                sprintf(equation, "((%1.0lf%c%1.0lf)%c%1.0lf)%c%1.0lf", tmp_c, op1, tmp_b, op2, tmp_d, op3, tmp_a);
                 can_make_ten = true;
               }
               else if (calc_equation(tmp_calc_dcb, tmp_a, op3) == 10){
-                sprintf(equation, "(%1.1lf%c(%1.1lf%c%1.1lf))%c%1.1lf", tmp_d, op2, tmp_c, op1, tmp_b, op3, tmp_a);
+                sprintf(equation, "(%1.0lf%c(%1.0lf%c%1.0lf))%c%1.0lf", tmp_d, op2, tmp_c, op1, tmp_b, op3, tmp_a);
                 can_make_ten = true;
               }
             }
