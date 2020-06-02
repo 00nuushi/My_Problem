@@ -200,12 +200,20 @@ bool get_meg_formula(std::string membership_number, std::vector<int> &meg_number
   count = 1;
   do {
     if (count >= 720 * (progress / 10.0)){
-      std::printf("\r計算中 φ(.. ) [");
+      std::printf("\r計算中 φ(.. ) %2.1lf%%[", count/720.0*100.0);
       for (int j = 0; j < progress; j++) std::printf("*");
       for (int j = progress; j < 10; j++) std::printf(".");
       std::printf("]");
       std::fflush(stdout);
       progress++;
+    }
+    else
+    {
+      std::printf("\r計算中 φ(.. ) %2.1lf%%[", count/720.0*100.0);
+      for (int j = 0; j < progress-1; j++) std::printf("*");
+      for (int j = progress-1; j < 10; j++) std::printf(".");
+      std::printf("]");
+      std::fflush(stdout);
     }
     for (int i = 0; i < max_operators; i++)
     {
