@@ -83,7 +83,7 @@
      `  `        dM@@g@@g@@g@@@@@@@@@@@@g@@g@@g@@g@@g@@g@@@@@g@@@@@@@@@@@@@@g@@g@@@@@@@N.    `   `
 
       The original image was downloaded from the tweet of Megu Shinonome (https://twitter.com/megu_shinonome/status/1254553909705637889/photo/1).
-      The ASCII art were created by using AA変換(アスキーアート生成) on the website (https://tool-taro.com/image_to_ascii/).
+      The ASCII art was created by using AA変換(アスキーアート生成) on the website (https://tool-taro.com/image_to_ascii/).
 */
 
 #include <iostream>
@@ -95,16 +95,15 @@
 #include <cmath>
 #include <utility>
 
-#define DELTA 0.0001
+#define DELTA 0.0000001
 #define PI 3.14159265
 
 std::vector<int> get_meg_number();
 bool is_valid_input(std::string membership_number);
-bool get_meg_formula(std::string membership_number, std::vector<int> &meg_number, std::string &meg_formula);
+bool get_meg_formula(std::string calc_rule, std::string membership_number, std::vector<int> &meg_number, std::string &meg_formula);
 std::vector<std::vector<int> > get_all_brackets(std::vector<std::vector<int> > &left_brackets_index, std::vector<std::vector<int> > &right_brackets_index);
 bool is_valid_brackets(std::vector<int> &brackets, std::vector<std::pair<int, int> > &brackets_pairs);
-std::string make_formula(std::vector<int> &meg_number, std::vector<char> &operators, std::vector<int> &brackets,
-                         std::vector<std::vector<int> > &left_brackets_index, std::vector<std::vector<int> > &right_brackets_index);
+std::string make_formula(std::vector<int> &meg_number, std::vector<char> &operators, std::vector<int> &brackets, std::vector<std::vector<int> > &left_brackets_index, std::vector<std::vector<int> > &right_brackets_index);
 int fast_pow(int x, int n);
 double calc_formula(std::string meg_formula, int now, int &next);
 double calc(double left, char op, double right);
@@ -112,28 +111,56 @@ double calc(double left, char op, double right);
 int main()
 {
   std::vector<int> meg_number;
-  std::string membership_number, meg_formula;
+  std::string membership_number, calc_rule, meg_formula;
   bool exist_meg_formula;
 
   std::cout << "あなたの会員番号を入力してください" << std::endl;
-  std::cin >> membership_number;
-  meg_number = get_meg_number();
-  if (is_valid_input(membership_number) )
+  while (true)
   {
-    exist_meg_formula = get_meg_formula(membership_number, meg_number, meg_formula);
-    std::cout << std::endl;
-    if (exist_meg_formula)
+    std::cin >> membership_number;
+    meg_number = get_meg_number();
+    if (is_valid_input(membership_number) )
     {
-      std::cout << "あなたの会員番号を与えるめぐ式は" << meg_formula << "です" << std::endl;
+      std::cout << "*1、/1を除外しますか？ [Yes/No]" << std::endl;
+      std::cin >> calc_rule;
+      while (calc_rule != "Yes" && calc_rule != "No")
+      {
+        std::cout << "入力が不正です。半角英字でYesかNoを入力してください" << std::endl;
+        std::cin >> calc_rule;
+      }
+      exist_meg_formula = get_meg_formula(calc_rule, membership_number, meg_number, meg_formula);
+      std::cout << std::endl;
+      if (exist_meg_formula)
+      {
+        std::cout << "あなたの会員番号を与えるめぐ式は" << meg_formula << "です" << std::endl;
+        return 0;
+      }
+      else
+      {
+        std::cout << "残念ながらあなたの会員番号を与えるめぐ式は見つかりませんでした……" << std::endl;
+        if (calc_rule == "Yes") std::cout << "*1、/1を含めて再計算しますか？ [Yes/No]" << std::endl;
+        std::cin >> calc_rule;
+        if (calc_rule == "Yes")
+        {
+          exist_meg_formula = get_meg_formula("No", membership_number, meg_number, meg_formula);
+          std::cout << std::endl;
+          if (exist_meg_formula)
+          {
+            std::cout << "あなたの会員番号を与えるめぐ式は" << meg_formula << "です" << std::endl;
+            return 0;
+          }
+          else
+          {
+            std::cout << "残念ながらあなたの会員番号を与えるめぐ式は見つかりませんでした……" << std::endl;
+            return 0;
+          }
+        }
+      }
     }
     else
     {
-      std::cout << "残念ながらあなたの会員番号を与えるめぐ式は見つかりませんでした……" << std::endl;
+      std::cout << "入力が不正です。非負の半角数字のみを入力してください" << std::endl;
     }
-  }
-  else
-  {
-    std::cout << "入力が不正です。非負の半角数字のみを入力してください" << std::endl;
   }
 }
 
@@ -166,17 +193,19 @@ bool is_valid_input(std::string membership_number)
   return ans;
 }
 
-bool get_meg_formula(std::string membership_number, std::vector<int> &meg_number, std::string &meg_formula)
+bool get_meg_formula(std::string calc_rule, std::string membership_number, std::vector<int> &meg_number, std::string &meg_formula)
 {
   /*
   each bracket:
   0 = (01)2345, 1 = (012)345, ... , 14 = 0123(45)
   */
-  int number, max_operators, operator_digit, progress, count, dummy;
+  int number, max_operators, operator_digit, progress, count, dummy, count_brackets;
+  std::vector<int> check_brackets(5);
   std::vector<char> operator_characters, operators(5);
+  std::vector<std::vector<char> > check_operators(5, std::vector<char>(2));
   std::vector<std::vector<int> > all_brackets;
   std::vector<std::vector<int> > left_brackets_index(6), right_brackets_index(6);
-  bool can_get_meg_formula;
+  bool no_mean, can_get_meg_formula;
 
   operator_characters.push_back('+');
   operator_characters.push_back('-');
@@ -215,27 +244,110 @@ bool get_meg_formula(std::string membership_number, std::vector<int> &meg_number
       std::printf("]");
       std::fflush(stdout);
     }
-    for (int i = 0; i < max_operators; i++)
+    for (int op0 = 0; op0 < 4; op0++)
     {
-      operator_digit = max_operators;
-      for (int j = 0; j < meg_number.size()-1; j++)
+      if (meg_number.at(1) < meg_number.at(0) && (op0 == 0 || op0 == 2)) continue;
+      operators.at(0) = operator_characters.at(op0);
+      for (int op1 = 0; op1 < 4; op1++)
       {
-        operators.at(j) = operator_characters.at((i%operator_digit)/(operator_digit/4));
-        operator_digit /= 4;
-      }
-      for (auto brackets : all_brackets)
-      {
-        meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
-        if (std::fabs(calc_formula(meg_formula, 0, dummy) - number) < DELTA)
+        if (meg_number.at(2) < meg_number.at(0) && meg_number.at(2) < meg_number.at(1) && (op1 == 0 || op1 == 2)) continue;
+        operators.at(1) = operator_characters.at(op1);
+        for (int op2 = 0; op2 < 4; op2++)
         {
-          can_get_meg_formula = true;
-          brackets.at(4) = 0;
-          meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
-          break;
+          if (meg_number.at(3) < meg_number.at(0) && meg_number.at(3) < meg_number.at(1) && meg_number.at(3) < meg_number.at(2) && (op2 == 0 || op2 == 2)) continue;
+          operators.at(2) = operator_characters.at(op2);
+          for (int op3 = 0; op3 < 4; op3++)
+          {
+            if (meg_number.at(4) < meg_number.at(0) && meg_number.at(4) < meg_number.at(1) && meg_number.at(4) < meg_number.at(2) && meg_number.at(4) < meg_number.at(3) && (op3 == 0 || op3 == 2)) continue;
+            operators.at(3) = operator_characters.at(op3);
+            for (int op4 = 0; op4 < 4; op4++)
+            {
+              if (meg_number.at(5) < meg_number.at(0) && meg_number.at(5) < meg_number.at(1) && meg_number.at(5) < meg_number.at(2) && meg_number.at(5) < meg_number.at(3) && meg_number.at(5) < meg_number.at(4) && (op4 == 0 || op4 == 2)) continue;
+              operators.at(4) = operator_characters.at(op4);
+              for (auto brackets : all_brackets)
+              {
+                meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
+                count_brackets = 0;
+                no_mean = false;
+                for (int i = 1; i < meg_formula.size()-1; i++)
+                {
+                  if (meg_formula[i] == '(')
+                  {
+                    count_brackets++;
+                    check_operators.at(count_brackets).at(0) = meg_formula[i-1];
+                    check_brackets.at(count_brackets) = 0;
+                  }
+                  else if (meg_formula[i] >= '0' && meg_formula[i] <= '9')
+                  {
+                    if (calc_rule == "Yes")
+                    {
+                      if (meg_formula[i] == '1' && meg_formula[i-1] != '2' && meg_formula[i+1] != '7')
+                      {
+                        if (meg_formula[i-1] == '*' || meg_formula[i-1] == '/' || meg_formula[i+1] == '*')
+                        {
+                          no_mean = true;
+                          break;
+                        }
+                      }
+                    }
+                    continue;
+                  }
+                  else if (meg_formula[i] == ')')
+                  {
+                    check_operators.at(count_brackets).at(1) = meg_formula[i+1];
+                    if (!check_brackets.at(count_brackets) || (!(check_operators.at(count_brackets).at(0) == '*' || check_operators.at(count_brackets).at(0) == '/') && !(check_operators.at(count_brackets).at(1) == '*' || check_operators.at(count_brackets).at(1) == '/')) )
+                    {
+                      no_mean = true;
+                      break;
+                    }
+                    count_brackets--;
+                  }
+                  else
+                  {
+                    if(meg_formula[i] == '+' || meg_formula[i] == '-') check_brackets.at(count_brackets)++;
+                  }
+                }
+                if (no_mean) continue;
+                if (std::fabs(calc_formula(meg_formula, 0, dummy) - number) < DELTA)
+                {
+                  can_get_meg_formula = true;
+                  brackets.at(4) = 0;
+                  meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
+                  break;
+                }
+              }
+              if (can_get_meg_formula) break;
+            }
+            if (can_get_meg_formula) break;
+          }
+          if (can_get_meg_formula) break;
         }
+        if (can_get_meg_formula) break;
       }
       if (can_get_meg_formula) break;
     }
+
+    // for (int i = 0; i < max_operators; i++)
+    // {
+    //   operator_digit = max_operators;
+    //   for (int j = 0; j < meg_number.size()-1; j++)
+    //   {
+    //     operators.at(j) = operator_characters.at((i%operator_digit)/(operator_digit/4));
+    //     operator_digit /= 4;
+    //   }
+    //   for (auto brackets : all_brackets)
+    //   {
+    //     meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
+    //     if (std::fabs(calc_formula(meg_formula, 0, dummy) - number) < DELTA)
+    //     {
+    //       can_get_meg_formula = true;
+    //       brackets.at(4) = 0;
+    //       meg_formula = make_formula(meg_number, operators, brackets, left_brackets_index, right_brackets_index);
+    //       break;
+    //     }
+    //   }
+    //   if (can_get_meg_formula) break;
+    // }
     if (can_get_meg_formula) break;
     count++;
   } while (std::next_permutation(meg_number.begin(), meg_number.end()));
@@ -317,8 +429,7 @@ bool is_valid_brackets(std::vector<int> &brackets, std::vector<std::pair<int, in
   return ans;
 }
 
-std::string make_formula(std::vector<int> &meg_number, std::vector<char> &operators, std::vector<int> &brackets,
-                         std::vector<std::vector<int> > &left_brackets_index, std::vector<std::vector<int> > &right_brackets_index)
+std::string make_formula(std::vector<int> &meg_number, std::vector<char> &operators, std::vector<int> &brackets, std::vector<std::vector<int> > &left_brackets_index, std::vector<std::vector<int> > &right_brackets_index)
 {
   /*
   each bracket:
@@ -419,7 +530,6 @@ double calc_formula(std::string meg_formula, int now, int &next)
     {
       next++;
       break;
-
     }
     if (init_flag)
     {
@@ -428,7 +538,7 @@ double calc_formula(std::string meg_formula, int now, int &next)
       init_flag = false;
     }
     right = calc_formula(meg_formula, now, next);
-    while (next != -1 && (meg_formula[next] == '*' || meg_formula[next] == '/'))
+    while (next != -1 && (meg_formula[now] == '+' || meg_formula[now] == '-') && (meg_formula[next] == '*' || meg_formula[next] == '/'))
     {
       right2 = calc_formula(meg_formula, next, next2);
       right = calc(right, meg_formula[next], right2);
