@@ -140,6 +140,11 @@ int main()
         std::cout << "残念ながらあなたの会員番号を与えるめぐ式は見つかりませんでした……" << std::endl;
         if (calc_rule == "Yes") std::cout << "*1、/1を含めて再計算しますか？ [Yes/No]" << std::endl;
         std::cin >> calc_rule;
+        while (calc_rule != "Yes" && calc_rule != "No")
+        {
+          std::cout << "入力が不正です。半角英字でYesかNoを入力してください" << std::endl;
+          std::cin >> calc_rule;
+        }
         if (calc_rule == "Yes")
         {
           exist_meg_formula = get_meg_formula("No", membership_number, meg_number, meg_formula);
