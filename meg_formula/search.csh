@@ -5,8 +5,9 @@ set num = 1
 
 while ($num <= $num_max)
   echo "$num" > q.txt
-  printf "%4d: " $num >> result.dat
-  ./meg_formula < q.txt >> result.dat
+  echo "Yes" >> q.txt
+  printf "%4d: " $num >> result_with_rule4.dat
+  ./meg_formula.out < q.txt >> result_with_rule4.dat
   rm q.txt
   @ num += 1
 end
